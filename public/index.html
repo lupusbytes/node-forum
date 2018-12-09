@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <!-- Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Forum CSS -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">NODE FORUM</a>
+
+        <!-- Links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Forum</a>
+            </li>
+
+            <!-- Dropdown -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Dropdown link
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Link 1</a>
+                    <a class="dropdown-item" href="#">Link 2</a>
+                    <a class="dropdown-item" href="#">Link 3</a>
+                </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li><a class="nav-link" href="#"><span class="fa fa-user"></span> Sign Up</a></li>
+            <li><a class="nav-link" href="#"><span class="fa fa-sign-in"></span> Login</a></li>
+        </ul>
+    </nav>
+    <!-- Sign up -->
+    <div class="container">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <form>
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="signupInputUsername">Brugernavn</label>
+                        <input type="email" class="form-control" id="signupInputUsername" aria-describedby="usernameHelp"
+                            placeholder="Angiv ønsket brugernavn">
+                        <small id="usernameHelp" class="form-text text-muted">Dette er dit alias andre brugere vil se.</small>
+                    </div>
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="signupInputEmail">Email-adresse</label>
+                        <input type="email" class="form-control" id="signupInputEmail" aria-describedby="emailHelp"
+                            placeholder="Angiv email-adresse">
+                        <small id="emailHelp" class="form-text text-muted">Vi vil aldrig dele din email med andre.</small>
+                    </div>
+                    <!-- Password 1-->
+                    <div class="form-group">
+                        <label for="signupInputPassword1">Kode</label>
+                        <input type="password" class="form-control" id="signupInputPassword1" placeholder="Dit ønskede kodeord">
+                    </div>
+                    <!-- Password 2 -->
+                    <div class="form-group">
+                        <label for="signupInputPassword2">Bekræft kode</label>
+                        <input type="password" class="form-control" id="signupInputPassword2" placeholder="Bekræft kodeord">
+                    </div>
+                    <!-- TOS -->
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Jeg acceptere at denne side ikke har
+                            vilkår.</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
