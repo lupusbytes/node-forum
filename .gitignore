@@ -1,5 +1,5 @@
 .vscode/*
-mysql_credentials_local.js
+mysql_credentials.js
 
 # Logs
 logs

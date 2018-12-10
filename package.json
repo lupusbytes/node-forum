@@ -4,11 +4,17 @@
   "description": "A full stack forum written in NodeJS",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create-migration": "knex migrate:make initial_schema",
+    "migrate-run": "knex migrate:latest",
+    "migrate-rollback": "knex migrate:rollback"
   },
   "author": "lupus",
   "license": "GPL-3.0",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "knex": "^0.15.2",
+    "mysql2": "^1.6.4",
+    "objection": "^1.4.0"
   }
 }

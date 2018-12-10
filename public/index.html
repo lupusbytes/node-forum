@@ -12,7 +12,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Forum CSS -->
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Document</title>
+    <title>NODE FORUM</title>
 </head>
 
 <body>
@@ -51,38 +51,42 @@
         <div class="row">
             <div class="col-4"></div>
             <div class="col-4">
-                <form>
+                <form action="" name="registrationForm">
                     <!-- Username -->
                     <div class="form-group">
                         <label for="signupInputUsername">Brugernavn</label>
-                        <input type="email" class="form-control" id="signupInputUsername" aria-describedby="usernameHelp"
-                            placeholder="Angiv ønsket brugernavn">
+                        <input type="text" class="form-control" name="signupInputUsername" id="signupInputUsername"
+                            aria-describedby="usernameHelp" placeholder="Angiv ønsket brugernavn">
                         <small id="usernameHelp" class="form-text text-muted">Dette er dit alias andre brugere vil se.</small>
                     </div>
                     <!-- Email -->
                     <div class="form-group">
                         <label for="signupInputEmail">Email-adresse</label>
-                        <input type="email" class="form-control" id="signupInputEmail" aria-describedby="emailHelp"
-                            placeholder="Angiv email-adresse">
+                        <input type="email" class="form-control" name="signupInputEmail" id="signupInputEmail"
+                            aria-describedby="emailHelp" placeholder="Angiv email-adresse">
                         <small id="emailHelp" class="form-text text-muted">Vi vil aldrig dele din email med andre.</small>
                     </div>
                     <!-- Password 1-->
                     <div class="form-group">
                         <label for="signupInputPassword1">Kode</label>
-                        <input type="password" class="form-control" id="signupInputPassword1" placeholder="Dit ønskede kodeord">
+                        <input type="password" class="form-control" name="signupInputPassword1" id="signupInputPassword1"
+                            placeholder="Dit ønskede kodeord">
                     </div>
                     <!-- Password 2 -->
                     <div class="form-group">
                         <label for="signupInputPassword2">Bekræft kode</label>
-                        <input type="password" class="form-control" id="signupInputPassword2" placeholder="Bekræft kodeord">
+                        <input type="password" class="form-control" name="signupInputPassword2" id="signupInputPassword2"
+                            placeholder="Bekræft kodeord">
                     </div>
                     <!-- TOS -->
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Jeg acceptere at denne side ikke har
+                        <input type="checkbox" class="form-check-input" name="signupCheck" id="signupCheck">
+                        <label class="form-check-label" for="signupCheck">Jeg acceptere at denne side ikke har
                             vilkår.</label>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <br>
+                    <!-- Submit -->
+                    <input type="submit" class="btn btn-primary" value="Opret">
                 </form>
             </div>
         </div>
@@ -96,6 +100,32 @@
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
+    <!-- js cookie -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
+    <!-- jQuery form validation -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.0/dist/jquery.validate.min.js"></script>
+    <script src="js/signup-validation.js"></script>
+    <script>
+        function MyBlah() {
+            console.log("blah called");
+            $.ajax({
+                type: "POST",
+                url: 'api/signup',
+                /*data: {
+                    "username": $("#signupInputUsername").val(),
+                    "password": $("#signupInputPassword1").val(),
+                    "email": $("#signupInputEmail").val()
+                },*/
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    console.log(data, textStatus, jqXHR);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
