@@ -1,6 +1,7 @@
-const config = require('./config/mysql_crendentials');
+const config = require("./config/mysql_credentials");
 
 module.exports = {
+
   development: {
     client: 'mysql2',
     connection: {

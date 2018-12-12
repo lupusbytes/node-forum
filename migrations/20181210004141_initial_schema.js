@@ -5,8 +5,8 @@ exports.up = function (knex, Promise) {
             table.string('username');
             table.string('password');
             table.string('email');
-            table.dateTime('created_at');
-            table.dateTime('last_online');
+            table.dateTime('created_at').defaultTo(knex.fn.now());;
+            table.dateTime('last_online').defaultTo(knex.fn.now());;
         })
 };
 

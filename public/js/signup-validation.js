@@ -39,22 +39,27 @@ $(function () {
                 required: "Du skal acceptere anarki!"
             }
         },
-        // Make sure the form is submitted to the destination defined in the "action" attribute of the form when valid
-        submitHandler: function (form) {
-            console.log("YOLO");
-            console.log(form);
-            console.log($("#signupInputPassword1").val());
-            MyBlah("YOLO");
-            /*$.ajax({
+        submitHandler: function (form, e) {
+            $.ajax({
                 type: "POST",
-                url: 'api/signup',
-                data: {
-                    "username":$("#signupInputUsername").val(),
-                    "password":$("#signupInputPassword1").val(),
-                    "email":$("#signupInputEmail").val()
+                url: "/api/signup",
+                data: { 
+                    username: $("#signupInputUsername").val(),
+                    email: $("#signupInputEmail").val(),
+                    password: $("#signupInputPassword1").val(),
                 },
-                dataType: "json"      
-            })*/
+                success: function (data) {
+                    Cookies.set('name', $("#signupInputUsername").val(), { expires: 7 });
+                    location.href = "/"; 
+                },
+                error: function (data) {
+                    let response = (data.responseJSON);
+                    if (response.status == 409) {
+                        $("#signupInputUsername").after("<label id='signupInputUsername-error' class='error' for='signupInputUsername'>Brugernavnet er optaget</label>")
+                    }     
+                }
+            });
+            e.preventDefault();
         }
     });
 });
