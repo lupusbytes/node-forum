@@ -3,7 +3,7 @@ const Thread = require('./Thread');
 
 class Category extends Model {
     static get tableName() {
-        return "threads";
+        return "categories";
     }
     static get jsonSchema() {
         return {
