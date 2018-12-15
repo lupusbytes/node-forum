@@ -42,14 +42,14 @@ $(function () {
         submitHandler: function (form, e) {
             $.ajax({
                 type: "POST",
-                url: "/api/signup",
+                url: "/api/users",
                 data: { 
                     username: $("#signupInputUsername").val(),
                     email: $("#signupInputEmail").val(),
                     password: $("#signupInputPassword1").val(),
                 },
                 success: function (data) {
-                    Cookies.set('name', $("#signupInputUsername").val(), { expires: 7 });
+                    Cookies.set('username', $("#signupInputUsername").val(), { expires: 7 });
                     location.href = "/"; 
                 },
                 error: function (data) {

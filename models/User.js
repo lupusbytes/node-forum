@@ -7,7 +7,8 @@ class User extends Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['username', 'email', 'password'],
+            // Unable to do partial updates if this is enabled ...
+            //required: ['username', 'email', 'password'],
 
             properties: {
                 id: { type: 'integer' },
@@ -15,7 +16,7 @@ class User extends Model {
                 email: { type: 'string' },
                 password: { type: 'string' },
                 created_at: { type: 'dateTime' },
-                last_login: { type: 'dateTime' }
+                last_online: { type: 'dateTime' }
             }
         }
     }

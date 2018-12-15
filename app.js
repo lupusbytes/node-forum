@@ -1,25 +1,25 @@
 const serverConfig = require('./config/server.json');
-const knexConfig = require('./knexfile');
-
-const Knex = require('knex');
-const { Model } = require('objection');
-
-// Initialize knex.
-const knex = Knex(knexConfig.development);
-
-// Bind all Models to a knex instance.
-Model.knex(knex);
-
 
 const express = require('express');
 const app = express();
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false, httpOnly: false }
 }));
+
+// DB & ORM
+const knexConfig = require('./knexfile');
+const Knex = require('knex');
+const { Model } = require('objection');
+const knex = Knex(knexConfig.development);
+Model.knex(knex);
+
+
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -34,6 +34,14 @@ const db = {
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/index.html")
+});
+
+app.get('/login', function (req, res) {
+    res.sendFile(__dirname + "/public/login.html");
+});
+
+app.get('/logout', function (req, res) {
+    res.sendFile(__dirname + "/public/logout.html");
 });
 
 app.get('/signup', function (req, res) {

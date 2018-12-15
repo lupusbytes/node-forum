@@ -15,9 +15,8 @@
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "express-session": "^1.15.6",
     "knex": "^0.15.2",
-    "mysql2": "^1.6.1",
+    "mysql2": "^1.6.4",
     "objection": "^1.4.0"
   }
 }

@@ -44,11 +44,31 @@
         <ul class="navbar-nav ml-auto" id="auth">
         </ul>
     </nav>
-    <!-- Index -->
+    <!-- Login -->
     <div class="container">
-        <h1 class="text-center">Velkommen til NODE FORUM</h1>
+        <h1 class="text-center">Log ind</h1>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <form name="login-form" id="login-form">
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="login-username">Brugernavn</label>
+                        <input type="text" class="form-control" name="login-username" id="login-username"
+                            placeholder="Dit brugernavn">
+                    </div>
+                    <!-- Password-->
+                    <div class="form-group">
+                        <label for="login-password">Kode</label>
+                        <input type="password" class="form-control" name="login-password" id="login-password"
+                            placeholder="Din kode">
+                    </div>
+                     <!-- Submit -->
+                     <input type="submit" class="btn btn-primary" value="Log ind">
+                </form>
+            </div>
+        </div>
     </div>
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -60,6 +80,7 @@
         crossorigin="anonymous"></script>
     <!-- JS Cookie -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
+    <script src="js/login.js"></script>
     <!-- Main js-->
     <script src="js/main.js"></script>
 </body>
