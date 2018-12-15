@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-migration": "knex migrate:make initial_schema",
     "migrate-run": "knex migrate:latest",
-    "migrate-rollback": "knex migrate:rollback"
+    "migrate-rollback": "knex migrate:rollback",
+    "insert-dummy-data": "node ./scripts/dummydata.js"
   },
   "author": "lupus",
   "license": "GPL-3.0",

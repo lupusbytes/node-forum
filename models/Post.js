@@ -1,6 +1,6 @@
 const { Model } = require('objection');
 
-class Thread extends Model {
+class Post extends Model {
     static get tableName() {
         return "threads";
     }
@@ -10,12 +10,12 @@ class Thread extends Model {
             
             properties: {
                 id: { type: 'integer' },
-                name: { type: 'string' },
+                content: { type: 'string' },
                 created_by: { type: 'integer'},
                 created_at: { type: 'dateTime' },
-                last_activity: { type: 'dateTime'}
+                thread_id: { type: 'integer' }
             }
         }
     }
 }
-module.exports = Thread;
+module.exports = Post;
