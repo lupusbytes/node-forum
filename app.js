@@ -28,7 +28,10 @@ app.use(bodyParser.json());
 const server = require('http').createServer(app);
 
 const db = {
-    User: require('./models/User')
+    User: require('./models/User'),
+    Post: require('./models/Post'),
+    Thread: require('./models/Thread'),
+    Category: require('./models/Category')
 };
 
 
@@ -47,6 +50,10 @@ app.get('/logout', function (req, res) {
 app.get('/signup', function (req, res) {
     res.sendFile(__dirname + "/public/signup.html")
 });
+
+app.get('/forum', function (req, res) {
+    res.sendFile(__dirname + "/public/forum.html");
+})
 
 // Setup the server
 server.listen(serverConfig.port, () => {

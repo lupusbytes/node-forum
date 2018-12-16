@@ -112,4 +112,33 @@ exports.apiRoutes = function (app, db) {
             res.send({ "status": status, "response": errorObj });
         }
     });
+    app.get('/api/categories', (req, res) => {
+        db.Category.query().select().then(categories => {
+            //console.log(categories);
+            let payload = [];
+            for (i = 0; i < categories.length; i++) {
+                // Find thread with latest activity
+                var categoryId = categories[i].id;
+                var categoryName = categories[i].name
+                var thread = (async function(id) {
+                    return await b.Thread.query().select().orderBy('last_activity').limit(1);
+                });
+                console.log(thread);
+                payload.push({
+                    id: categoryId,
+                    name: categoryName,
+                    latestThread: thread[0],
+                    //threadCount: categories[i].threads.length
+                });
+
+                //dates.reduce(function (a, b) { return a > b ? a : b; });
+            }
+            console.log(payload);
+            // Return HTTP Status 200 - OK
+            const status = 200;
+            res.status(200);
+            res.send({ "status": status, data: payload });
+        });
+    });
+    
 }
