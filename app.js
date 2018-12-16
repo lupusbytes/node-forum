@@ -53,8 +53,15 @@ app.get('/signup', function (req, res) {
 
 app.get('/forum', function (req, res) {
     res.sendFile(__dirname + "/public/forum.html");
-})
+});
 
+app.get('/forum/categories/:category_id', function (req, res) {
+    res.sendFile(__dirname + "/public/category.html");
+});
+
+app.get('/forum/categories/:category_id/threads/:thread_id', function (req, res) {
+    res.sendFile(__dirname + "/public/thread.html");
+});
 // Setup the server
 server.listen(serverConfig.port, () => {
     console.log("Server running on port", server.address().port);

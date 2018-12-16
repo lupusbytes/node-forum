@@ -11,7 +11,7 @@
     <!-- Icons -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Forum CSS -->
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="/style.css">
     <title>NODE FORUM</title>
 </head>
 
@@ -46,18 +46,18 @@
     </nav>
     <!-- Forum -->
     <div class="container">
-        <h1 class="text-center">Kategorier</h1>
+        <h1 class="text-center" id="category-name"></h1>
         <div class="row">
             <div class="col-12">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Kategori navn</th>
-                            <th scope="col">Sidst opdateret tråd</th>
-                            <th scope="col" class="text-right">Antal tråde</th>
+                            <th scope="col">Tråd</th>
+                            <th scope="col">Oprettet af</th>
+                            <th scope="col" class="text-right">Antal svar</th>
                         </tr>
                     </thead>
-                    <tbody id="categories">
+                    <tbody id="threads">
                     </tbody>
                 </table>
             </div>
@@ -76,8 +76,8 @@
     <!-- JS Cookie -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.0/src/js.cookie.min.js"></script>
     <!-- Main js-->
-    <script src="js/main.js"></script>
-    <script src="js/forum.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/category.js"></script>
 </body>
 
 </html>

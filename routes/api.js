@@ -17,6 +17,8 @@ exports.apiRoutes = function (app, db) {
                     console.log(userArray);
                     if (bcrypt.compare(password, userArray[0].password)) {
                         req.session.isLoggedIn = true;
+                        console.log("userId", userArray[0].id);
+                        req.session.userId = userArray[0].id;
                         req.session.username = username;
                         // Return HTTP Status 200 - OK
                         const status = 200;
@@ -49,7 +51,7 @@ exports.apiRoutes = function (app, db) {
         const username = req.session.username;
         if (req.session.isLoggedIn) {
             db.User.query().update({
-                last_online: new Date().toISOString()
+                last_activity: new Date().toISOString()
             }).where('username', username).then();
             req.session.destroy();
             // Return HTTP Status 200 - OK
@@ -87,6 +89,7 @@ exports.apiRoutes = function (app, db) {
                         db.User.query().insert({ username, email, password: hash }).then(persistedData => {
                             req.session.isLoggedIn = true;
                             req.session.username = username;
+                            req.session.userId = persistedData.user_id;
                             console.log(persistedData);
 
                             // Return HTTP Status 201 - Created
@@ -113,32 +116,106 @@ exports.apiRoutes = function (app, db) {
         }
     });
     app.get('/api/categories', (req, res) => {
-        db.Category.query().select().then(categories => {
-            //console.log(categories);
+        db.Category.query().select().eager('threads').then(categories => {
+            // This query could be optimized, instead of looping the eagerly loaded threads,
+            // we could create a more intelligent SQL to retrieve the latest thread for each category_id
             let payload = [];
-            for (i = 0; i < categories.length; i++) {
-                // Find thread with latest activity
-                var categoryId = categories[i].id;
-                var categoryName = categories[i].name
-                var thread = (async function(id) {
-                    return await b.Thread.query().select().orderBy('last_activity').limit(1);
-                });
-                console.log(thread);
+            for (let i = 0; i < categories.length; i++) {
                 payload.push({
-                    id: categoryId,
-                    name: categoryName,
-                    latestThread: thread[0],
-                    //threadCount: categories[i].threads.length
+                    id: categories[i].id,
+                    name: categories[i].name,
+                    latestThread: getThreadWithLatestActivity(categories[i].threads),
+                    threadCount: categories[i].threads.length
                 });
-
-                //dates.reduce(function (a, b) { return a > b ? a : b; });
             }
-            console.log(payload);
-            // Return HTTP Status 200 - OK
             const status = 200;
-            res.status(200);
+            res.status(status);
             res.send({ "status": status, data: payload });
         });
     });
-    
+
+    function getThreadWithLatestActivity(data) {
+        let latest = 0;
+        for (let i = 1; i < data.length; i++) {
+            if (new Date(data[i].last_activity) > new Date(data[latest].last_activity)) {
+                latest = i;
+            }
+        }
+        return data[latest];
+    }
+
+    app.get('/api/categories/:category_id', (req, res) => {
+        db.Category.query().select().where({ id: req.params.category_id }).then(categories => {
+            if (categories.length == 1) {
+                // Return HTTP Status 200 - OK
+                const status = 200;
+                res.status(status);
+                res.send({ "status": status, data: categories[0] });
+            } else {
+                // Return HTTP Status 404 - Not Found
+                const status = 404;
+                res.status(status);
+                res.send({ "status": status, "message": "No category found with id: " + req.params.category_id });
+            }
+
+        });
+    });
+
+    app.get('/api/categories/:category_id/threads', (req, res) => {
+        db.Thread.query().select('threads.*', db.Thread.relatedQuery('posts').count().as('nrOfPosts')).eager('creator').where({ category_id: req.params.category_id }).then(threads => {
+            if (threads.length > 0) {
+                // Return HTTP Status 200 - OK
+                const status = 200;
+                res.status(status);
+                res.send({ "status": status, data: threads });
+            } else {
+                // Return HTTP Status 404 - Not Found
+                const status = 404;
+                res.status(status);
+                res.send({ "status": status, "message": "No category found with id: " + req.params.category_id });
+            }
+        })
+    });
+
+    app.get('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
+        db.Thread.query().select().where({ id: req.params.thread_id }).eager('posts.creator').then(threads => {
+            if (threads.length == 1) {
+                // Return HTTP Status 200 - OK
+                const status = 200;
+                res.status(status);
+                res.send({ "status": status, data: threads[0] });
+            } else {
+                // Return HTTP Status 404 - Not Found
+                const status = 404;
+                res.status(status);
+                res.send({ "status": status, "message": "No thread found with id: " + req.params.thread_id });
+            }
+        })
+    });
+
+    app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
+        const threadId = parseInt(req.params.thread_id); // mysql2 library kept complaining that this value was not an integer...
+        const categoryId = req.params.category_id;
+
+        console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
+        console.log("threadId", threadId);
+        if (req.session.isLoggedIn) {
+            console.log("from", req.body.username);
+            const content = req.body.content;
+            const userId = req.session.userId;
+            console.log("userId", userId);
+            db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId }).then(persistedData => {
+                db.User.query().update({
+                    last_activity: new Date().toISOString()
+                }).where({ id: userId }).then(() => {
+                    // Return HTTP Status 201 - Created
+                    const status = 201;
+                    res.status(status);
+                    res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                });
+            })
+        } else {
+            console.log("User was not logged in");
+        }
+    });
 }

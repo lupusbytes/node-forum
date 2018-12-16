@@ -7,7 +7,9 @@ $(document).ready(function () {
             $.each(data.data, function (key, value) {
                 const html = `
                 <tr>
-                    <td>` + value.name + `</td>
+                    <td><a href='forum/categories/` + value.id + "'>" + value.name + `</a></td>
+                    <td><a href='forum/categories/` + value.id + "/threads/" + value.latestThread.id + "'>" + value.latestThread.name + `</td>
+                    <td class="text-right">` + value.threadCount + `</td>
                 </tr>`
                 $("#categories").append(html);
             })

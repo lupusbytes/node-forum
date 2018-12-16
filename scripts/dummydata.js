@@ -94,12 +94,11 @@ function insertPosts(threads, users) {
                 thread_id: (threads.find(o => o.name === 'Hvilken film så du sidst - og var den god ?')).id,
                 created_by: (users.find(o => o.username === 'Skurken')).id,
                 content: `Tænkte en tråd som denne kunne være useful som inspirationskilde til hvad man skal smække op på skærmen en dag hvor den står på film tid. IMDB ratings kan man ikke altid regne med imo.
+For at tråden bliver brugbar så bør en posts indeholde:
 
-                        For at tråden bliver brugbar så bør en posts indeholde:
-                        
-                        1. Filmtitle evt link
-                        2  Hvor god er filmen fra 1 - 10. (hvor 10 er bedst)
-                        3. Dine kommentar til filmen og hvorfor du gav den top eller bund karakter.`
+1. Filmtitle evt link
+2.  Hvor god er filmen fra 1 - 10. (hvor 10 er bedst)
+3. Dine kommentar til filmen og hvorfor du gav den top eller bund karakter.`
             },
             {
                 thread_id: (threads.find(o => o.name === 'Hvilken film så du sidst - og var den god ?')).id,

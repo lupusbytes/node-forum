@@ -1,8 +1,21 @@
 const { Model } = require('objection');
+const User = require('./User');
 
 class Post extends Model {
     static get tableName() {
-        return "threads";
+        return "posts";
+    }
+    static get relationMappings() {
+        return {
+            creator: {
+                relation: Model.HasOneRelation,
+                modelClass: User,
+                join: {
+                    from: 'posts.created_by',
+                    to: 'users.id'
+                }
+            }
+        };
     }
     static get jsonSchema() {
         return {

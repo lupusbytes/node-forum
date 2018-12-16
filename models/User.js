@@ -16,7 +16,7 @@ class User extends Model {
                 email: { type: 'string' },
                 password: { type: 'string' },
                 created_at: { type: 'dateTime' },
-                last_online: { type: 'dateTime' }
+                last_activity: { type: 'dateTime' }
             }
         }
     }

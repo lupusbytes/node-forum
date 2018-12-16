@@ -6,7 +6,7 @@ exports.up = function (knex, Promise) {
             table.string('password');
             table.string('email');
             table.dateTime('created_at').defaultTo(knex.fn.now());;
-            table.dateTime('last_online').defaultTo(knex.fn.now());;
+            table.dateTime('last_activity').defaultTo(knex.fn.now());;
         })
         .createTable('categories', function (table) {
             table.increments('id').primary();
@@ -24,7 +24,7 @@ exports.up = function (knex, Promise) {
         })
         .createTable('posts', function (table) {
             table.increments('id').primary();
-            table.string('content').notNullable();
+            table.string('content', 4000).notNullable();
             table.integer('thread_id').unsigned().notNullable();
             table.foreign('thread_id').references('threads.id');
             table.integer('created_by').unsigned().notNullable();
@@ -40,5 +40,4 @@ exports.down = function (knex, Promise) {
         .dropTableIfExists('threads')
         .dropTableIfExists('categories')
         .dropTableIfExists('users')
-
 };

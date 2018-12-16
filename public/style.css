@@ -4,3 +4,31 @@
 .navbar {
     margin-bottom: 25px;
 }
+.user-col {
+    background-color:#eaeaea;
+    padding-top:25px;
+    margin-bottom: 25px;
+}
+.post-col {
+    background-color:#f4f4f4;
+    min-height: 300px;
+    padding-top:25px;
+    margin-bottom: 25px;
+}
+#thread-title {
+    font-size:25px;
+}
+.bottom-right-text {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-right:25px;
+    padding-bottom: 25px;
+}
+.tiny {
+    font-size:12px;
+    color:#919191;
+}
+#submit-row{
+    display:hidden;
+}
