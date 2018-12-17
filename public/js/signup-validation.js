@@ -50,6 +50,7 @@ $(function () {
                 },
                 success: function (data) {
                     Cookies.set('username', $("#signupInputUsername").val(), { expires: 7 });
+                    Cookies.set('userId', data.data.userId, { expires: 7 });
                     location.href = "/"; 
                 },
                 error: function (data) {
