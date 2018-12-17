@@ -28,21 +28,36 @@ $(document).ready(function () {
     const paths = pathname.split('/');
     const categoryId = paths[3];
     const threadId = paths[5];
-    const postsUrl = "/api/categories/" + categoryId + "/threads/" + threadId + "/posts";
-    
+    const apiCategoryUrl = "/api/categories/" + categoryId;
+    const apiPostUrl = apiCategoryUrl + "/threads/" + threadId + "/posts";
+
+    // GET Category name
     $.ajax({
         type: "GET",
-        url: postsUrl,
-        success: function (data) {
+        url: apiCategoryUrl,
+        success: function (response) {
+            $("#category-name").append(response.data.name);
+            // Set link
+            const link = '/forum/categories/' + categoryId;
+            $("#category-link").attr('href', link);
+        }
+    })
 
+    // GET Posts
+    $.ajax({
+        type: "GET",
+        url: apiPostUrl,
+        success: function (data) {
             const threadName = data.data.name;
+            
             $("#thread-title").append(threadName);
             $.each(data.data.posts, function (key, value) {
                 addPostHtml(value);
             });
-
         } // We don't need to handle 404 here, it will simply mean that there has not been created any threads
     })
+
+    // Add input form for creating new posts, if the user is logged in.
     if (Cookies.get('username')) {
         $("#submit-row").removeClass('d-none');
         $("#submit-form").submit(function (e) {
@@ -50,7 +65,7 @@ $(document).ready(function () {
             const content = $("#post-input").val();
             $.ajax({
                 type: "POST",
-                url: postsUrl,
+                url: apiPostUrl,
                 data: {
                     content: content
                 },
@@ -62,7 +77,7 @@ $(document).ready(function () {
                     let response = (data.responseJSON);
                     if (response.status == 401) {
                         alert("Du er ikke logget ind!")
-                    }     
+                    }
                 }
             });
             e.preventDefault();
