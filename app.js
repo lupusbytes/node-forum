@@ -28,7 +28,6 @@ app.use(bodyParser.json());
 const server = require('http').createServer(app);
 
 const db = {
-    Knex: knex,
     User: require('./models/User'),
     Post: require('./models/Post'),
     Thread: require('./models/Thread'),
