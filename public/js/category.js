@@ -1,9 +1,11 @@
 $(document).ready(function () {
     const pathname = window.location.pathname;
     const categoryId = pathname.substring(18);
+    const apiCategoryUrl = "/api/categories/" + categoryId;
+    const apiCategoryThreadUrl = apiCategoryUrl + "/threads"
     $.ajax({
         type: "GET",
-        url: "/api/categories/" + categoryId,
+        url: apiCategoryUrl,
         success: function (data) {
             $("#category-name").append(data.data.name);
         },
@@ -34,13 +36,13 @@ $(document).ready(function () {
         const content = $("#post-input").val();
         $.ajax({
             type: "POST",
-            url: "/api/categories/" + categoryId + "/threads" ,
+            url: apiCategoryThreadUrl,
             data: {
                 name: name,
                 content: content
             },
             success: function (response) {
-                console.log(response);
+                location.href = "/forum/categories/" + categoryId + "/threads/" + response.data.id; 
             },
             error: function (data) {
                 let response = (data.responseJSON);

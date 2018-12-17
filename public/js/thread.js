@@ -17,7 +17,7 @@ function addPostHtml(post) {
     <div class="col-10 post-col rounded">
         <p>` + replaceAll(post.content, "\n", "<br>") + `</p>
         <div class="bottom-right-text tiny">
-        Oprettet ` + new Date(post.creator.created_at).toLocaleString('da-DK') + `</div>
+        Oprettet ` + new Date(post.created_at).toLocaleString('da-DK') + `</div>
     </div>`
     $("#post-row").append(html);
 }
@@ -29,7 +29,6 @@ $(document).ready(function () {
     const categoryId = paths[3];
     const threadId = paths[5];
     const postsUrl = "/api/categories/" + categoryId + "/threads/" + threadId + "/posts";
-
     
     $.ajax({
         type: "GET",

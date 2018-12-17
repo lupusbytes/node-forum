@@ -54,7 +54,7 @@ exports.apiRoutes = function (app, db) {
         const username = req.session.username;
         if (req.session.isLoggedIn) {
             db.User.query().update({
-                last_activity: new Date().toISOString()
+                last_activity: new Date()
             }).where('username', username).then();
             req.session.destroy();
             // Return HTTP Status 200 - OK
@@ -92,14 +92,13 @@ exports.apiRoutes = function (app, db) {
                         db.User.query().insert({ username, email, password: hash }).then(persistedData => {
                             req.session.isLoggedIn = true;
                             req.session.username = username;
-                            req.session.userId = persistedData.user_id;
-
-                            const payload = { "username": username, userId: persistedData.user_id }
+                            req.session.userId = persistedData.id;
+                            const payload = { "username": username, userId: persistedData.id }
 
                             // Return HTTP Status 201 - Created
                             const status = 201;
                             res.status(status)
-                            res.send({ "status": status, "message": "user has been succesfully created", data: payload })
+                            res.send({ "status": status, "message": "user has been succesfully created", "data": payload })
                         });
                     });
                 }
@@ -166,38 +165,54 @@ exports.apiRoutes = function (app, db) {
     });
 
     app.get('/api/categories/:category_id/threads', (req, res) => {
-        db.Thread.query().select('threads.*', db.Thread.relatedQuery('posts').count().as('nrOfPosts')).eager('creator').where({ category_id: req.params.category_id }).then(threads => {
-            if (threads.length > 0) {
-                // Return HTTP Status 200 - OK
-                const status = 200;
-                res.status(status);
-                res.send({ "status": status, data: threads });
-            } else {
-                // Return HTTP Status 404 - Not Found
-                const status = 404;
-                res.status(status);
-                res.send({ "status": status, "message": "No category found with id: " + req.params.category_id });
-            }
-        })
+        db.Thread.query().select(
+            'threads.*',
+            db.Thread.relatedQuery('posts').count().as('nrOfPosts'))
+            .eager('creator').where({
+                category_id: req.params.category_id
+            }).orderBy('last_activity', 'desc').then(threads => {
+                if (threads.length > 0) {
+                    // Return HTTP Status 200 - OK
+                    const status = 200;
+                    res.status(status);
+                    res.send({ "status": status, data: threads });
+                } else {
+                    // Return HTTP Status 404 - Not Found
+                    const status = 404;
+                    res.status(status);
+                    res.send({ "status": status, "message": "No category found with id: " + req.params.category_id });
+                }
+            })
     });
 
     app.post('/api/categories/:category_id/threads', (req, res) => {
-        const userId = req.session.userId;
-        db.Thread.query().insertGraph({
-            category_id: parseInt(req.params.category_id),
-            created_by: userId,
-            name: req.body.name,
-            posts: [{
-                content: req.body.content,
-                created_by: userId
-            }]
-        }).then(() => {
-            db.User.query().update({
-                last_activity: new Date().toISOString()
-            }).where({ id: userId }).then(() => {
-
+        if (req.session.isLoggedIn) {
+            const userId = req.session.userId;
+            db.Thread.query().insertWithRelatedAndFetch({
+                category_id: parseInt(req.params.category_id),
+                created_by: userId,
+                name: req.body.name,
+                posts: [{
+                    content: req.body.content,
+                    created_by: userId,
+                    created_at: new Date()
+                }]
+            }).then(persistedData => {
+                db.User.query().update({
+                    last_activity: new Date(),
+                }).where({ id: userId }).then(() => {
+                    // Return HTTP Status 201 - Created
+                    const status = 201;
+                    res.status(status);
+                    res.send({ "status": status, "message": "successfully posted thread", "data": persistedData });
+                });
             });
-        });
+        } else {
+            // Return HTTP Status 401 - Unathorized
+            const status = 401;
+            res.status(status);
+            res.send({ "status": status, "message": "you are currently not logged in" });
+        }
     });
 
     app.get('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
@@ -218,20 +233,27 @@ exports.apiRoutes = function (app, db) {
 
     app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
         const threadId = parseInt(req.params.thread_id);
+        const categoryId = parseInt(req.params.category_id);
         console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
         if (req.session.isLoggedIn) {
             const content = req.body.content;
             const userId = req.session.userId;
-            db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId }).then(persistedData => {
+            db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId, created_at: new Date() }).then(persistedData => {
                 db.User.query().update({
-                    last_activity: new Date().toISOString()
-                }).where({ id: userId }).then(() => {
+                    last_activity: new Date()
+                }).where({
+                    id: userId
+                }).then(() => {
                     db.User.query().select().where({ id: userId }).then(users => {
-                        persistedData.creator = users[0];
-                        // Return HTTP Status 201 - Created
-                        const status = 201;
-                        res.status(status);
-                        res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                        db.Thread.query().update({
+                            last_activity: new Date()
+                        }).where({ id: threadId }).then(() => {
+                            persistedData.creator = users[0];
+                            // Return HTTP Status 201 - Created
+                            const status = 201;
+                            res.status(status);
+                            res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                        });
                     });
                 });
             })
@@ -244,21 +266,26 @@ exports.apiRoutes = function (app, db) {
     });
     app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
         const threadId = parseInt(req.params.thread_id);
+        console.log(date);
         console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
         console.log("threadId", threadId);
         if (req.session.isLoggedIn) {
             const content = req.body.content;
             const userId = req.session.userId;
-            db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId }).then(persistedData => {
+            db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId, created_at: new Date() }).then(persistedData => {
                 db.User.query().update({
-                    last_activity: new Date().toISOString()
+                    last_activity: new Date()
                 }).where({ id: userId }).then(() => {
-                    db.User.query().select().where({ id: userId }).then(users => {
-                        persistedData.creator = users[0];
-                        // Return HTTP Status 201 - Created
-                        const status = 201;
-                        res.status(status);
-                        res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                    db.Thread.query().update({
+                        last_activity: new Date()
+                    }).then(() => {
+                        db.User.query().select().where({ id: userId }).then(users => {
+                            persistedData.creator = users[0];
+                            // Return HTTP Status 201 - Created
+                            const status = 201;
+                            res.status(status);
+                            res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                        });
                     });
                 });
             })
