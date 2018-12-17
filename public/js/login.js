@@ -11,6 +11,7 @@ $(document).ready(function() {
             },
             success: function (data) {
                 Cookies.set('username', username, { expires: 7 });
+                Cookies.set('userId', data.data.userId, { expires: 7 })
                 location.href = "/"; 
             },
             error: function (data) {
