@@ -1,5 +1,6 @@
 $(document).ready(function () {
     Cookies.remove('username');
+    Cookies.remove('userId')
     $.ajax({
         type: "GET",
         url: "/api/logout",

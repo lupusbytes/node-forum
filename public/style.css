@@ -32,3 +32,27 @@
 #submit-row{
     display:hidden;
 }
+
+#shoutbox {
+    width:100%;
+    min-height:200px;
+    max-height:200px;
+    border:2px solid #6c6e70;
+    border-radius: 5px;
+    overflow-y: scroll;
+}
+#shoutbox-content {
+    margin:15px;
+    margin-bottom: -10px;
+    
+}
+#chat-input {
+    float:left;
+    width:92%;
+}
+#chat-input-button {
+    width:8%;
+}
+.message {
+    width:100%;
+}

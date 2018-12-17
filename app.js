@@ -31,7 +31,8 @@ const db = {
     User: require('./models/User'),
     Post: require('./models/Post'),
     Thread: require('./models/Thread'),
-    Category: require('./models/Category')
+    Category: require('./models/Category'),
+    Message: require('./models/Message')
 };
 
 
@@ -62,6 +63,8 @@ app.get('/forum/categories/:category_id', function (req, res) {
 app.get('/forum/categories/:category_id/threads/:thread_id', function (req, res) {
     res.sendFile(__dirname + "/public/thread.html");
 });
+
+
 // Setup the server
 server.listen(serverConfig.port, () => {
     console.log("Server running on port", server.address().port);
@@ -73,3 +76,31 @@ app.use(express.static('public'));
 // Register api routes
 const apiRoutes = require('./routes/api');
 apiRoutes.apiRoutes(app, db);
+
+
+const socket = require('socket.io');
+var io = socket(server);
+io.on('connection', function (socket) {
+    // On connect, send last 25 messages
+    db.Message.query().select().eager('creator').orderBy('created_at', 'desc').limit(25).then(messages => {
+        messages.reverse();
+        for (i = 0; i < messages.length; i++) {
+            const payload = { message: messages[i].text, username: messages[i].creator.username, timestamp: messages[i].created_at };
+            socket.emit('chat', payload);
+        }
+    });
+    
+
+    // Broadcast message
+    socket.on('chat', function (data) {
+        const userId = parseInt(data.userId);
+        db.User.query().select().where({ id: userId }).then(users => {
+            db.Message.query().insert({ text: data.message, created_by: userId }).then(() => {
+                const user = users[0];
+                data.timestamp = new Date();
+                data.username = user.username;
+                io.emit('chat', data);
+            });
+        });
+    });
+});

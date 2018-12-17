@@ -44,8 +44,25 @@
         <ul class="navbar-nav ml-auto" id="auth">
         </ul>
     </nav>
-    <!-- Forum -->
+
     <div class="container">
+        <!-- Shoutbox -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center">Shoutbox</h2>
+                <div id="shoutbox">
+                    <div id="shoutbox-content">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12" style="padding-bottom: 50px;">
+                <div id="chat-input-col" class="d-none">
+                    <input type="text" class="form-control" name="chat-input" id="chat-input" placeholder="Skriv en besked">
+                    <button type="button" class="btn btn-outline-dark" id="chat-input-button">Send</button>
+                </div>
+            </div>
+        </div>
+        <!-- Forum categories -->
         <h1 class="text-center">Kategorier</h1>
         <div class="row">
             <div class="col-12">
@@ -78,6 +95,9 @@
     <!-- Main js-->
     <script src="js/main.js"></script>
     <script src="js/forum.js"></script>
+    <!-- Chat js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
+    <script src="/js/chat.js"></script>
 </body>
 
 </html>

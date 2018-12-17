@@ -44,12 +44,29 @@
         <ul class="navbar-nav ml-auto" id="auth">
         </ul>
     </nav>
-    <!-- Forum -->
+
     <div class="container">
-        <div style="width:100%; margin-bottom:25px;" class="text-center">
-                <a href="/forum"><strong>Tilbage til kategorier</strong></a>
+        <!-- Shoutbox -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center">Shoutbox</h2>
+                <div id="shoutbox">
+                    <div id="shoutbox-content">
+                    </div>
+                </div>
+            </div>
+            <div class="col-12" style="padding-bottom: 50px;">
+                <div id="chat-input-col" class="d-none">
+                    <input type="text" class="form-control" name="chat-input" id="chat-input" placeholder="Skriv en besked">
+                    <button type="button" class="btn btn-outline-dark" id="chat-input-button">Send</button>
+                </div>
+            </div>
         </div>
-        
+        <!-- Category thread overview -->
+        <div style="width:100%; margin-bottom:25px;" class="text-center">
+            <a href="/forum"><strong>Tilbage til kategorier</strong></a>
+        </div>
+
         <h1 class="text-center" id="category-name"></h1>
         <div class="row">
             <div class="col-12">
@@ -98,6 +115,9 @@
     <!-- Main js-->
     <script src="/js/main.js"></script>
     <script src="/js/category.js"></script>
+    <!-- Chat js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
+    <script src="/js/chat.js"></script>
 </body>
 
 </html>

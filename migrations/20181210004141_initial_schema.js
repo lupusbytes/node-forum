@@ -31,6 +31,13 @@ exports.up = function (knex, Promise) {
             table.foreign('created_by').references('users.id');
             table.dateTime('created_at').defaultTo(knex.fn.now());
         })
+        .createTable('messages', function(table) {
+            table.increments('id').primary();
+            table.integer('created_by').unsigned().notNullable()
+            table.foreign('created_by').references('users.id')
+            table.string('text');
+            table.dateTime('created_at').defaultTo(knex.fn.now());
+        })
     return schema;
 };
 
@@ -39,5 +46,6 @@ exports.down = function (knex, Promise) {
         .dropTableIfExists('posts')
         .dropTableIfExists('threads')
         .dropTableIfExists('categories')
+        .dropTableIfExists('messages')
         .dropTableIfExists('users')
 };
