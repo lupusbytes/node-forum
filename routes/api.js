@@ -14,10 +14,8 @@ exports.apiRoutes = function (app, db) {
         if (username && password) {
             db.User.query().select().where({ username }).then(userArray => {
                 if (userArray.length == 1) {
-                    console.log(userArray);
                     if (bcrypt.compare(password, userArray[0].password)) {
                         req.session.isLoggedIn = true;
-                        console.log("userId", userArray[0].id);
                         req.session.userId = userArray[0].id;
                         req.session.username = username;
 
@@ -266,9 +264,7 @@ exports.apiRoutes = function (app, db) {
     });
     app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
         const threadId = parseInt(req.params.thread_id);
-        console.log(date);
         console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
-        console.log("threadId", threadId);
         if (req.session.isLoggedIn) {
             const content = req.body.content;
             const userId = req.session.userId;
