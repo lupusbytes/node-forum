@@ -61,8 +61,10 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12">
-                <h2 text-center>Opret ny tråd</h2>
+            <div class="col-12 text-center d-none" id="col-create-button">
+                <button type="button" class="btn btn-primary" id="btn-create-thread">Opret en ny tråd</button>
+            </div>
+            <div class="col-12 d-none" id="col-create-thread">
                 <form name="submit-form" id="submit-form">
                     <div class="form-group">
                         <label for="name-input">Titel</label>
@@ -72,7 +74,7 @@
                         <label for="post-input">Indhold</label>
                         <textarea class="form-control" rows="7" id="post-input"></textarea>
                     </div>
-                    <input type="submit" class="btn btn-primary text-right" style="margin-top:15px;" value="Send">
+                    <input type="submit" class="btn btn-success text-right" style="margin-top:15px;" value="Send">
                 </form>
             </div>
         </div>

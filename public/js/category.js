@@ -53,4 +53,12 @@ $(document).ready(function () {
         });
         e.preventDefault();
     });
+    if (Cookies.get('userId')) {
+        $("#col-create-button").removeClass('d-none');
+        $("#btn-create-thread").click(function(){
+            $("#col-create-thread").removeClass('d-none');
+        }); 
+    }
+    
+
 });
