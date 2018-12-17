@@ -20,10 +20,13 @@ exports.apiRoutes = function (app, db) {
                         console.log("userId", userArray[0].id);
                         req.session.userId = userArray[0].id;
                         req.session.username = username;
+
+                        const payload = { "username": username, "userId": userArray[0].id }
+
                         // Return HTTP Status 200 - OK
                         const status = 200;
                         res.status(status);
-                        res.send({ "status": status, "message": "successfully logged in" })
+                        res.send({ "status": status, "message": "successfully logged in", data: payload })
                     } else {
                         res.status(authFailedStatus);
                         res.send(authFailObject)
@@ -90,12 +93,13 @@ exports.apiRoutes = function (app, db) {
                             req.session.isLoggedIn = true;
                             req.session.username = username;
                             req.session.userId = persistedData.user_id;
-                            console.log(persistedData);
+
+                            const payload = { "username": username, userId: persistedData.user_id }
 
                             // Return HTTP Status 201 - Created
                             const status = 201;
                             res.status(status)
-                            res.send({ "status": status, "message": "user has been succesfully created" })
+                            res.send({ "status": status, "message": "user has been succesfully created", data: payload })
                         });
                     });
                 }
@@ -177,6 +181,25 @@ exports.apiRoutes = function (app, db) {
         })
     });
 
+    app.post('/api/categories/:category_id/threads', (req, res) => {
+        const userId = req.session.userId;
+        db.Thread.query().insertGraph({
+            category_id: parseInt(req.params.category_id),
+            created_by: userId,
+            name: req.body.name,
+            posts: [{
+                content: req.body.content,
+                created_by: userId
+            }]
+        }).then(() => {
+            db.User.query().update({
+                last_activity: new Date().toISOString()
+            }).where({ id: userId }).then(() => {
+
+            });
+        });
+    });
+
     app.get('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
         db.Thread.query().select().where({ id: req.params.thread_id }).eager('posts.creator').then(threads => {
             if (threads.length == 1) {
@@ -194,28 +217,81 @@ exports.apiRoutes = function (app, db) {
     });
 
     app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
-        const threadId = parseInt(req.params.thread_id); // mysql2 library kept complaining that this value was not an integer...
-        const categoryId = req.params.category_id;
-
+        const threadId = parseInt(req.params.thread_id);
         console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
-        console.log("threadId", threadId);
         if (req.session.isLoggedIn) {
-            console.log("from", req.body.username);
             const content = req.body.content;
             const userId = req.session.userId;
-            console.log("userId", userId);
             db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId }).then(persistedData => {
                 db.User.query().update({
                     last_activity: new Date().toISOString()
                 }).where({ id: userId }).then(() => {
-                    // Return HTTP Status 201 - Created
-                    const status = 201;
-                    res.status(status);
-                    res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                    db.User.query().select().where({ id: userId }).then(users => {
+                        persistedData.creator = users[0];
+                        // Return HTTP Status 201 - Created
+                        const status = 201;
+                        res.status(status);
+                        res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                    });
                 });
             })
         } else {
-            console.log("User was not logged in");
+            // Return HTTP Status 401 - Unathorized
+            const status = 401;
+            res.status(status);
+            res.send({ "status": status, "message": "you are currently not logged in" });
         }
     });
+    app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
+        const threadId = parseInt(req.params.thread_id);
+        console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
+        console.log("threadId", threadId);
+        if (req.session.isLoggedIn) {
+            const content = req.body.content;
+            const userId = req.session.userId;
+            db.Post.query().insert({ content: content, created_by: userId, thread_id: threadId }).then(persistedData => {
+                db.User.query().update({
+                    last_activity: new Date().toISOString()
+                }).where({ id: userId }).then(() => {
+                    db.User.query().select().where({ id: userId }).then(users => {
+                        persistedData.creator = users[0];
+                        // Return HTTP Status 201 - Created
+                        const status = 201;
+                        res.status(status);
+                        res.send({ "status": status, "message": "successfully posted reply", data: persistedData });
+                    });
+                });
+            })
+        } else {
+            // Return HTTP Status 401 - Unathorized
+            const status = 401;
+            res.status(status);
+            res.send({ "status": status, "message": "you are currently not logged in" });
+        }
+    });
+    app.delete('/api/categories/:category_id/threads/:thread_id/posts/:post_id', (req, res) => {
+        const postId = parseInt(req.params.post_id);
+        if (req.session.isLoggedIn) {
+            db.Post.select().where({ id: postId }).then(posts => {
+                let post = posts[0];
+                if (post.created_by === req.session.userId) {
+                    db.Post.deleteById(postId).then(() => {
+                        // Return HTTP Status 204 - No Content: The server successfully processed the request, but is not returning any content
+                        const status = 204;
+                        res.status(status);
+                        res.send({ "status": status, "message": "succesfully deleted the post" })
+                    });
+                } else {
+                    // Return HTTP Status 403 - Forbidden
+                    const status = 403;
+                    res.status(status);
+                    res.send({ "status": status, "message": "you do not have access to delete this post" })
+                }
+            });
+        }
+    });
+
 }
+
+
+
