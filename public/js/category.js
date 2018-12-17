@@ -26,6 +26,29 @@ $(document).ready(function () {
                 $("#threads").append(html);
             })
         } // We don't need to handle 404 here, it will simply mean that there has not been created any threads
-
     })
+
+    $("#submit-form").submit(function (e) {
+        console.log("submitted");
+        const name = $("#name-input").val();
+        const content = $("#post-input").val();
+        $.ajax({
+            type: "POST",
+            url: "/api/categories/" + categoryId + "/threads" ,
+            data: {
+                name: name,
+                content: content
+            },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (data) {
+                let response = (data.responseJSON);
+                if (response.status == 401) {
+                    alert("Du er ikke logget ind!")
+                }     
+            }
+        });
+        e.preventDefault();
+    });
 });
