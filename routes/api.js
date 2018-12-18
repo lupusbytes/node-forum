@@ -49,6 +49,7 @@ exports.apiRoutes = function (app, db) {
      * Seeing as we only need to destroy the serverside cookie and handle no external data, GET will suffice. */
     app.get('/api/logout', (req, res) => {
         console.log("GET recieved on /api/auth")
+        
         const username = req.session.username;
         if (req.session.isLoggedIn) {
             db.User.query().update({
@@ -117,6 +118,8 @@ exports.apiRoutes = function (app, db) {
         }
     });
     app.get('/api/categories', (req, res) => {
+        console.log("GET received on /api/categories");
+        
         db.Category.query().select().eager('threads').then(categories => {
             // This query could be optimized, instead of looping the eagerly loaded threads,
             // we could create a more intelligent SQL to retrieve the latest thread for each category_id
@@ -146,7 +149,10 @@ exports.apiRoutes = function (app, db) {
     }
 
     app.get('/api/categories/:category_id', (req, res) => {
-        db.Category.query().select().where({ id: req.params.category_id }).then(categories => {
+        const categoryId = parseInt(req.params.category_id);
+        console.log("GET received on /api/categories/" + categoryId);
+
+        db.Category.query().select().where({ id: categoryId }).then(categories => {
             if (categories.length == 1) {
                 // Return HTTP Status 200 - OK
                 const status = 200;
@@ -163,11 +169,13 @@ exports.apiRoutes = function (app, db) {
     });
 
     app.get('/api/categories/:category_id/threads', (req, res) => {
+        const categoryId = parseInt(req.params.category_id);
+        console.log("GET received on /api/categories/" + categoryId + "/threads");
         db.Thread.query().select(
             'threads.*',
             db.Thread.relatedQuery('posts').count().as('nrOfPosts'))
             .eager('creator').where({
-                category_id: req.params.category_id
+                category_id: categoryId
             }).orderBy('last_activity', 'desc').then(threads => {
                 if (threads.length > 0) {
                     // Return HTTP Status 200 - OK
@@ -184,10 +192,13 @@ exports.apiRoutes = function (app, db) {
     });
 
     app.post('/api/categories/:category_id/threads', (req, res) => {
+        const categoryId = parseInt(req.params.category_id);
+        console.log("POST received on /api/categories/" + categoryId + "/threads");
+        
         if (req.session.isLoggedIn) {
             const userId = req.session.userId;
             db.Thread.query().insertWithRelatedAndFetch({
-                category_id: parseInt(req.params.category_id),
+                category_id: categoryId,
                 created_by: userId,
                 name: req.body.name,
                 posts: [{
@@ -214,6 +225,10 @@ exports.apiRoutes = function (app, db) {
     });
 
     app.get('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
+        const categoryId = parseInt(req.params.category_id);
+        const threadId = parseInt(req.params.thread_id);
+        console.log("GET received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
+
         db.Thread.query().select().where({ id: req.params.thread_id }).eager('posts.creator').then(threads => {
             if (threads.length == 1) {
                 // Return HTTP Status 200 - OK
@@ -233,6 +248,7 @@ exports.apiRoutes = function (app, db) {
         const threadId = parseInt(req.params.thread_id);
         const categoryId = parseInt(req.params.category_id);
         console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
+        
         if (req.session.isLoggedIn) {
             const content = req.body.content;
             const userId = req.session.userId;
@@ -265,6 +281,7 @@ exports.apiRoutes = function (app, db) {
     app.post('/api/categories/:category_id/threads/:thread_id/posts', (req, res) => {
         const threadId = parseInt(req.params.thread_id);
         console.log("POST received on /api/categories/" + categoryId + "/threads/" + threadId + "/posts");
+        
         if (req.session.isLoggedIn) {
             const content = req.body.content;
             const userId = req.session.userId;
@@ -292,8 +309,9 @@ exports.apiRoutes = function (app, db) {
             res.send({ "status": status, "message": "you are currently not logged in" });
         }
     });
+
     app.delete('/api/categories/:category_id/threads/:thread_id/posts/:post_id', (req, res) => {
-        const postId = parseInt(req.params.post_id);
+        const postId = parseInt(req.params.post_id);    
         if (req.session.isLoggedIn) {
             db.Post.select().where({ id: postId }).then(posts => {
                 let post = posts[0];
@@ -313,7 +331,6 @@ exports.apiRoutes = function (app, db) {
             });
         }
     });
-
 }
 
 
